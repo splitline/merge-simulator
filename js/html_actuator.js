@@ -1,7 +1,7 @@
 function HTMLActuator() {
-  this.tileContainer    = document.querySelector(".tile-container");
-  this.scoreContainer   = document.querySelector(".score-container");
-  this.bestContainer    = document.querySelector(".best-container");
+  this.tileContainer = document.querySelector(".tile-container");
+  this.scoreContainer = document.querySelector(".score-container");
+  this.bestContainer = document.querySelector(".best-container");
   this.messageContainer = document.querySelector(".game-message");
 
   this.score = 0;
@@ -49,9 +49,12 @@ HTMLActuator.prototype.clearContainer = function (container) {
 HTMLActuator.prototype.addTile = function (tile) {
   var self = this;
 
-  var wrapper   = document.createElement("div");
-  var inner     = document.createElement("div");
-  var position  = tile.previousPosition || { x: tile.x, y: tile.y };
+  var wrapper = document.createElement("div");
+  var inner = document.createElement("div");
+  var position = tile.previousPosition || {
+    x: tile.x,
+    y: tile.y
+  };
   var positionClass = this.positionClass(position);
 
   // We can't use classlist because it somehow glitches when replacing classes
@@ -61,13 +64,33 @@ HTMLActuator.prototype.addTile = function (tile) {
 
   this.applyClasses(wrapper, classes);
 
+  const mapping = {
+    2: "南台科大",
+    4: "中台科大",
+    8: "台北城市科大",
+    16: "台灣大學",
+    32: "台灣首府大學",
+    64: "亞洲大學",
+    128: "屏科",
+    256: "虎科",
+    512: "雲科",
+    1024: "台科",
+    2048: "開山科大"
+  }
+
   inner.classList.add("tile-inner");
-  inner.textContent = tile.value;
+  if(tile.value <= 2048)
+    inner.textContent = mapping[tile.value];
+  else
+    inner.textContent = "開山科大 lv." + (Math.log2(tile.value) - 10);
 
   if (tile.previousPosition) {
     // Make sure that the tile gets rendered in the previous position first
     window.requestAnimationFrame(function () {
-      classes[2] = self.positionClass({ x: tile.x, y: tile.y });
+      classes[2] = self.positionClass({
+        x: tile.x,
+        y: tile.y
+      });
       self.applyClasses(wrapper, classes); // Update the position
     });
   } else if (tile.mergedFrom) {
@@ -95,7 +118,10 @@ HTMLActuator.prototype.applyClasses = function (element, classes) {
 };
 
 HTMLActuator.prototype.normalizePosition = function (position) {
-  return { x: position.x + 1, y: position.y + 1 };
+  return {
+    x: position.x + 1,
+    y: position.y + 1
+  };
 };
 
 HTMLActuator.prototype.positionClass = function (position) {
@@ -103,30 +129,33 @@ HTMLActuator.prototype.positionClass = function (position) {
   return "tile-position-" + position.x + "-" + position.y;
 };
 
+const score2rank = score => Math.ceil(1000 - score * 0.1) > 0 ? Math.floor(1000 - score * 0.1) : 1;
 HTMLActuator.prototype.updateScore = function (score) {
   this.clearContainer(this.scoreContainer);
 
-  var difference = score - this.score;
+  console.log(score , this.score)
+  var difference =  score2rank(this.score) - score2rank(score);
   this.score = score;
 
-  this.scoreContainer.textContent = this.score;
+  console.log(score2rank(this.score))
+  this.scoreContainer.textContent = score2rank(this.score) == 1000 ? "1000+ 名" : score2rank(this.score)+"名";
 
   if (difference > 0) {
     var addition = document.createElement("div");
     addition.classList.add("score-addition");
-    addition.textContent = "+" + difference;
+    addition.textContent = "⬆" + difference;
 
     this.scoreContainer.appendChild(addition);
   }
 };
 
 HTMLActuator.prototype.updateBestScore = function (bestScore) {
-  this.bestContainer.textContent = bestScore;
+  this.bestContainer.textContent = score2rank(bestScore)+"名";
 };
 
 HTMLActuator.prototype.message = function (won) {
-  var type    = won ? "game-won" : "game-over";
-  var message = won ? "You win!" : "Game over!";
+  var type = won ? "game-won" : "game-over";
+  var message = won ? "乂國立開山科大乂" : "垃圾學店下去888";
 
   this.messageContainer.classList.add(type);
   this.messageContainer.getElementsByTagName("p")[0].textContent = message;

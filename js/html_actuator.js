@@ -79,7 +79,7 @@ HTMLActuator.prototype.addTile = function (tile) {
   }
 
   inner.classList.add("tile-inner");
-  if(tile.value <= 2048)
+  if (tile.value <= 2048)
     inner.textContent = mapping[tile.value];
   else
     inner.textContent = "開山科大 lv." + (Math.log2(tile.value) - 10);
@@ -129,16 +129,18 @@ HTMLActuator.prototype.positionClass = function (position) {
   return "tile-position-" + position.x + "-" + position.y;
 };
 
-const score2rank = score => score ? Math.max(Math.floor(1000 - score*0.1), 1) : 1000;
+HTMLActuator.prototype.score2rank = function (score) {
+  return Math.max(Math.floor(
+    1000 - (Math.min(score, 5000) * 0.1 + Math.max(score - 5000, 0) * 0.03)
+  ), 1);
+}
 HTMLActuator.prototype.updateScore = function (score) {
   this.clearContainer(this.scoreContainer);
 
-  console.log(score , this.score)
-  var difference =  score2rank(this.score) - score2rank(score);
+  var difference = this.score2rank(this.score) - this.score2rank(score);
   this.score = score;
 
-  console.log(score2rank(this.score))
-  this.scoreContainer.textContent = score2rank(this.score) == 1000 ? "1000+ 名" : score2rank(this.score)+"名";
+  this.scoreContainer.textContent = this.score2rank(this.score) >= 1000 ? "1000+ 名" : this.score2rank(this.score) + "名";
 
   if (difference > 0) {
     var addition = document.createElement("div");
@@ -150,7 +152,7 @@ HTMLActuator.prototype.updateScore = function (score) {
 };
 
 HTMLActuator.prototype.updateBestScore = function (bestScore) {
-  this.bestContainer.textContent = score2rank(bestScore)+"名";
+  this.bestContainer.textContent = this.score2rank(this.score) >= 1000 ? "1000+ 名" : this.score2rank(this.score) + "名";
 };
 
 HTMLActuator.prototype.message = function (won) {

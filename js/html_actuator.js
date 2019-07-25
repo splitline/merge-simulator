@@ -129,7 +129,7 @@ HTMLActuator.prototype.positionClass = function (position) {
   return "tile-position-" + position.x + "-" + position.y;
 };
 
-const score2rank = score => Math.ceil(1000 - score * 0.1) > 0 ? Math.floor(1000 - score * 0.1) : 1;
+const score2rank = score => Math.ceil(1500 - score * 0.1) > 0 ? Math.floor(1500 - score * 0.1) : 1;
 HTMLActuator.prototype.updateScore = function (score) {
   this.clearContainer(this.scoreContainer);
 
@@ -138,7 +138,7 @@ HTMLActuator.prototype.updateScore = function (score) {
   this.score = score;
 
   console.log(score2rank(this.score))
-  this.scoreContainer.textContent = score2rank(this.score) == 1000 ? "1000+ 名" : score2rank(this.score)+"名";
+  this.scoreContainer.textContent = score2rank(this.score) >= 1000 ? "1000+ 名" : score2rank(this.score)+"名";
 
   if (difference > 0) {
     var addition = document.createElement("div");

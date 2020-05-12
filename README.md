@@ -8,3 +8,7 @@ https://splitline.github.io/merge-simulator/
 不用當校長也能體驗到併校的快感。併得越多排名便會越高，試著刷到世界第一吧🐱
 
 > Fork From https://github.com/gabrielecirulli/2048/
+
+---
+
+我的 commit message 好醜 = =
